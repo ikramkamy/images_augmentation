@@ -1,4 +1,4 @@
-from imgaug import augmenters as iaa
+from imgaug import augmenters as aug
 import cv2
 import glob
 images_path=glob.glob("images/*.webp")
@@ -9,10 +9,16 @@ for img_path in images_path:
     images.append(img)
     
 # Augmentation 
-augmentation =iaa.Sequential([
-   iaa.Fliplr(1),
-   iaa.Flipud(0.5), 
-   iaa.Affine(translate_percent={"x":(-0.5,0.5)})
+augmentation =aug.Sequential([
+   aug.Fliplr(1),
+   aug.Flipud(1), 
+   aug.Rotate((-50,50)),
+   aug.Crop(percent=(0, 0.3)),
+   aug.KMeansColorQuantization(), 
+   aug.UniformColorQuantization(),
+   aug.GaussianBlur(sigma=(0.0, 3.0)),
+   aug.AdditiveGaussianNoise(scale=0.1*255),
+   aug.Affine(translate_percent={"x":(-0.5,0.5)})
 ])
 augmented_images=augmentation(images=images)
 for img in augmented_images:
